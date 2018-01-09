@@ -8,22 +8,48 @@ public class Player : MonoBehaviour {
 
     public GameObject player;
     private Rigidbody pRb;
-    public float torque;
+    [SerializeField]
     private float rotationSpeed;
-
-    private bool turnLeft = false;
-    private bool turnRight = false;
+    [SerializeField]
+    private float walkSpeed;
+    [SerializeField]
+    private float jumpForce;
+    private bool isJumping=false;
+    private bool isWalking = false;
+   
 	void Start () {
         player = this.gameObject;
         pRb = player.GetComponent<Rigidbody>();
-        rotationSpeed = torque;
+       
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	   
-       
-        
+
+        if (Input.GetKey(KeyCode.W))
+        {
+            isWalking = true;
+            Debug.Log("pressing w");
+            if(Input.GetKey(KeyCode.LeftShift))
+            {
+                walkSpeed+=1;
+            }
+        }
+      else
+        {
+            isWalking = false;
+        }
+
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            isJumping = true;
+        }
+        else
+        {
+           
+            isJumping = false;
+        }
+
 
 
     }
@@ -40,16 +66,22 @@ public class Player : MonoBehaviour {
             pRb.AddTorque(transform.up * -rotationSpeed * turn);
         }
        
-        if(Input.GetKeyDown(KeyCode.W))
+        if(isWalking)
         {
-            Vector3 Accel = 50 * this.transform.right;
-
-            pRb.AddForce( Accel,ForceMode.Acceleration);
+            Debug.Log("isWalking=" + isWalking);
+            // Vector3 dir = ne
+            pRb.AddRelativeForce(Vector3.right*walkSpeed);
         }
         
-           
+        if(isJumping)
+        {
+            pRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        }
+
     }
-
-
-
+        
+           
 }
+
+
+
